@@ -1,0 +1,13 @@
+version: '3'
+
+tasks:
+  create-tag:
+    desc: "Create a git tag based on a provided input and push it to origin"
+    vars:
+      TAG: '{{.TAG | default "test"}}'
+    cmds:
+      - "git tag {{.TAG}}"
+      - "git push origin {{.TAG}}"
+    silent: true
+  gha-run:
+    cmd: act -s TFE_TOKEN -s TFE_ORGANIZATION workflow_dispatch

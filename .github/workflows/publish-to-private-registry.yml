@@ -1,0 +1,40 @@
+name: Publish Terraform Module
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  #   branches: [ "main" ]
+  workflow_dispatch:
+env:
+  MODULE_NAME: monorepoapi
+  MODULE_VERSION: ${GITHUB_REF#refs/tags/}
+  # MODULE_VERSION: "0.0.1"
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Download TFX
+        run: |
+          curl -L -o tfx.tar.gz https://github.com/straubt1/tfx/releases/download/v0.1.4/tfx_Linux_arm64.tar.gz
+          tar -xzf tfx.tar.gz
+          sudo mv tfx /usr/local/bin/
+          tfx -v
+      - name: Create Configuration
+        env:
+          TFE_TOKEN: ${{ secrets.TFE_TOKEN }}
+          TFE_ORGANIZATION: ${{ secrets.TFE_ORGANIZATION }}
+        run: |
+          cat <<EOF > ~/.tfx.hcl
+          tfeToken = "$TFE_TOKEN"
+          tfeOrganization = "$TFE_ORGANIZATION"
+          EOF
+      - name: Create Module A
+        if: false # Don't run
+        run: tfx registry module create -n ${{ env.MODULE_NAME }} -p gcp
+      - name: Create Module A
+        working-directory: ./module_a
+        run: tfx registry module version create -n ${{ env.MODULE_NAME }} -p gcp -v ${{ env.MODULE_VERSION }}
+        
