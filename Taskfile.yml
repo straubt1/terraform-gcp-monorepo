@@ -10,4 +10,4 @@ tasks:
       - "git push origin {{.TAG}}"
     silent: true
   gha-run:
-    cmd: act -s TFE_TOKEN -s TFE_ORGANIZATION workflow_dispatch
+    cmd: act -s TFE_TOKEN -s TFE_ORGANIZATION --container-architecture linux/amd64/v8 workflow_dispatch
