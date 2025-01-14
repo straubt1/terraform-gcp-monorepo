@@ -11,3 +11,16 @@ tasks:
     silent: true
   gha-run:
     cmd: act -s TFE_TOKEN -s TFE_ORGANIZATION --container-architecture linux/amd64/v8 workflow_dispatch
+  gha-delete-all-runs:
+    desc: Clean up workspace runs
+    cmd: gh run list --repo straubt1/terraform-gcp-monorepo --limit 100 --json databaseId --jq '.[].databaseId' | xargs -I {} gh run delete {} --repo straubt1/terraform-gcp-monorepo
+  gha-delete-all-tags:
+    cmds:
+      - "git tag -l | xargs -n 1 git tag -d"
+      - "git fetch"
+      - "git tag -l | xargs -n 1 -I {} git push origin :refs/tags/{}"
+  tfx-create-modules:
+    cmds:
+      - tfx registry module create -n monorepoModuleA -p gcp
+      - tfx registry module create -n monorepoModuleB -p gcp
+      - tfx registry module create -n monorepoModuleC -p gcp
