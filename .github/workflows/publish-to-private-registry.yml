@@ -23,9 +23,9 @@ jobs:
         run: echo "Module Version to Publish - ${{ env.MODULE_VERSION }}"
       - name: Download TFX
         run: |
-          curl -L -o /usr/local/tfx.tar.gz ${{ env.TFX_DOWNLOAD }}
-          tar -xzf /usr/local/tfx.tar.gz
-          sudo mv tfx /usr/local/bin/
+          curl -L -o /tmp/tfx.tar.gz ${{ env.TFX_DOWNLOAD }}
+          tar -xzf /tmp/tfx.tar.gz -C /tmp
+          sudo mv /tmp/tfx /usr/local/bin/
           tfx -v
       - name: Create Configuration
         env:
